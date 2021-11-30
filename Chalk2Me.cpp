@@ -1,9 +1,13 @@
 // Chalk2Me.cpp : Questo file contiene la funzione 'main', in cui inizia e termina l'esecuzione del programma.
-// http://www.macs.hw.ac.uk/~ruth/year4VEs/Labs/wiiuse.html
+// http://www.macs.hw.apc.uk/~ruth/year4VEs/Labs/wiiuse.html
 
 #include <iostream>
 #include <wiiuse.h>
 #include <stdio.h>
+#include <windows.h>
+#include <time.h>
+#include <math.h>
+
 #ifdef WIIUSE_WIN32
 
 #include <windows.h>
@@ -178,67 +182,129 @@ void handle_disconnect(wiimote* wm) {
 	printf("\n\n--- DISCONNECTED [wiimote id %i] ---\n", wm->unid);
 }
 
+void textcolor(int color)
+{
+	static int __BACKGROUND;
+
+	HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
+	CONSOLE_SCREEN_BUFFER_INFO csbiInfo;
+
+
+	GetConsoleScreenBufferInfo(h, &csbiInfo);
+
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color + (__BACKGROUND << 4));
+}
+void delay(float number_of_seconds)
+{
+	// Converting time into milli_seconds
+	float milli_seconds = 1000 * number_of_seconds;
+
+	// Storing start time
+	clock_t start_time = clock();
+
+	// looping till required time is not achieved
+	while (clock() < start_time + (int)milli_seconds);
+}
+
+
+void calibrazione(struct wiimote_t* wm, int *angolo) { //!!!!!non so quale sia il tipo di ir.dot
+
+	
+	/*
+IR tracking reports an XY position on a virtual screen whose resolution is defined by the user. By default this resolution is dependent on the set aspect ratio and is:
+For 16:9, 660x370
+For 4:3, 560x420
+This resolution can be changed by calling the function:
+
+		void wiiuse_set_ir_vres(struct wiimote_t* wm, unsigned int x, unsigned int y);
+	
+The virtual screen resolution only applies to the x and y members of the IR structure and does not apply to the individual IR source positions defined in ir_t::ir_dot_t. The individual IR source coordinates are on a fixed virtual screen resolution of 1024x768 and can not be changed.
+
+The coordinate (0,0) is at the top left hand corner of the virtual screen.*/
+
+	printf("\nPremi l'angolo in alto a sinistra della lavagna...\n");
+
+	while (!wm->ir.dot[0].visible) {
+		angolo[0] = wm->ir.dot[0].x; //!!!!non so quale sia il tipo di ir.dot
+		angolo[1] = wm->ir.dot[0].y;
+	}
+
+	delay(5);
+
+	printf("Premi l'angolo in basso a destra della lavagna...\n");
+
+	while (!wm->ir.dot[0].visible) {
+		angolo[2] = wm->ir.dot[0].x;
+		angolo[3] = wm->ir.dot[0].y;
+	}
+
+	float ratio = (angolo[1] - angolo[0]) / (angolo[3] - angolo[2]);
+
+	if (abs((float)16/9 - ratio) > abs((float)4/3 - ratio)) {
+		wiiuse_set_aspect_ratio(wm, WIIUSE_ASPECT_4_3);
+		wiiuse_set_ir_vres(wm, 1440, 1080);
+	} else {
+		wiiuse_set_aspect_ratio(wm, WIIUSE_ASPECT_16_9);
+		wiiuse_set_ir_vres(wm, 1920, 1080);
+	}
+
+	printf("Calibrazione effettuata con successo!");
+
+
+
+
+}
+
+
 int main()
 {
-    printf("Hello World!\n");
 	wiimote** wiimotes = wiiuse_init(1);
 	int found = wiiuse_find(wiimotes, 1, 5);
-
 	int connected = wiiuse_connect(wiimotes, 1);
-	if (connected)
-		printf("La base di Chalk2Me è stata trovata.\n");
-	else {
-		printf("Base di Chalk2Me non trovata.\n");
-	
+
+	if (connected) { 
+		textcolor(10);
+		printf("La base di Chalk2Me è stata trovata\n"); 
+		textcolor(15);
+	} else {
+		textcolor(12);
+		printf("Base di Chalk2Me non trovata\n");
+		textcolor(15);	
+		while (!wiiuse_connect(wiimotes, 1)) {
+			textcolor(11);
+			printf("\rIn attesa del collegamento   ");
+			delay(0.3);
+			printf("\rIn attesa del collegamento.  ");
+			delay(0.3);
+			printf("\rIn attesa del collegamento.. ");
+			delay(0.3);
+			printf("\rIn attesa del collegamento...");
+			delay(0.3);
+			textcolor(12);
+		}
+		textcolor(10);
+		printf("La base di Chalk2Me è stata trovata\n");
+		textcolor(15);
 	}
-	while (any_wiimote_connected(wiimotes, MAX_WIIMOTES)) {
+	while (wiiuse_connect(wiimotes, 1)) {
 		if (wiiuse_poll(wiimotes, MAX_WIIMOTES)) {
-			/*
-			 *	This happens if something happened on any wiimote.
-			 *	So go through each one and check if anything happened.
-			 */
-			int i = 0;
-			for (; i < MAX_WIIMOTES; ++i) {
-				switch (wiimotes[i]->event) {
-				case WIIUSE_EVENT:
-					/* a generic event occurred */
-					handle_event(wiimotes[i]);
-					break;
 
-				case WIIUSE_STATUS:
-					/* a status event occurred */
-					handle_ctrl_status(wiimotes[i]);
-					break;
+			wiiuse_set_ir(wiimotes[0], 1);
+			wiiuse_motion_sensing(wiimotes[0], 1); //Bisogna attivare anche l'accellerometro per avere un tracking più accurato
+			wiiuse_set_ir_sensitivity(wiimotes[0], 5); //Sensibilità, 5 è il massimo
 
-				case WIIUSE_DISCONNECT:
-				case WIIUSE_UNEXPECTED_DISCONNECT:
-					/* the wiimote disconnected */
-					handle_disconnect(wiimotes[i]);
-					break;
 
-				case WIIUSE_READ_DATA:
-					/*
-					 *	Data we requested to read was returned.
-					 *	Take a look at wiimotes[i]->read_req
-					 *	for the data.
-					 */
-					break;
-
-				case WIIUSE_NUNCHUK_INSERTED:
-					/*
-					 *	a nunchuk was inserted
-					 *	This is a good place to set any nunchuk specific
-					 *	threshold values.  By default they are the same
-					 *	as the wiimote.
-					 */
-					 /* wiiuse_set_nunchuk_orient_threshold((struct nunchuk_t*)&wiimotes[i]->exp.nunchuk, 90.0f); */
-					 /* wiiuse_set_nunchuk_accel_threshold((struct nunchuk_t*)&wiimotes[i]->exp.nunchuk, 100); */
-					printf("Nunchuk inserted.\n");
-					break;
-				default:
-					break;
+			for (int i=0; i < 4; ++i) {
+				/* check if the source is visible */
+				if (wiimotes[0]->ir.dot[i].visible) {
+					printf("IR source %i: (%u, %u)\n", i, wiimotes[0]->ir.dot[i].x, wiimotes[0]->ir.dot[i].y);
 				}
 			}
+
+			printf("IR cursor: (%u, %u)\n", wiimotes[0]->ir.x, wiimotes[0]->ir.y);
+			printf("IR z distance: %f\n", wiimotes[0]->ir.z);
+			
+			
 		}
 	}
 
@@ -247,6 +313,7 @@ int main()
 	 */
 	wiiuse_cleanup(wiimotes, MAX_WIIMOTES);
 
+	return 0;
 
 
 }
