@@ -1,0 +1,1 @@
+int paint_main();

@@ -7,6 +7,7 @@
 #include <windows.h>
 #include <time.h>
 #include <math.h>
+#include "Chalk2Me.h"
 
 #ifdef WIIUSE_WIN32
 
@@ -238,9 +239,9 @@ The coordinate (0,0) is at the top left hand corner of the virtual screen.*/
 		angolo[3] = wm->ir.dot[0].y;
 	}
 
-	float ratio = (angolo[1] - angolo[0]) / (angolo[3] - angolo[2]);
+	float ratio = (angolo[1] - angolo[0]) / (float)(angolo[3] - angolo[2]);
 
-	if (abs((float)16/9 - ratio) > abs((float)4/3 - ratio)) {
+	if (abs(16/(float)9 - ratio) > abs(4/(float)3 - ratio)) {
 		wiiuse_set_aspect_ratio(wm, WIIUSE_ASPECT_4_3);
 		wiiuse_set_ir_vres(wm, 1440, 1080);
 	} else {
@@ -255,12 +256,15 @@ The coordinate (0,0) is at the top left hand corner of the virtual screen.*/
 
 }
 
-
 int main()
 {
 	wiimote** wiimotes = wiiuse_init(1);
 	int found = wiiuse_find(wiimotes, 1, 5);
 	int connected = wiiuse_connect(wiimotes, 1);
+
+
+	return paint_main();
+	
 
 	if (connected) { 
 		textcolor(10);
@@ -307,14 +311,11 @@ int main()
 			
 		}
 	}
-
 	/*
 	 *	Disconnect the wiimotes
 	 */
 	wiiuse_cleanup(wiimotes, MAX_WIIMOTES);
 
 	return 0;
-
-
 }
 
