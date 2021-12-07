@@ -4,6 +4,11 @@
 #include <stdio.h>
 #include <glfw3.h>
 #include <stdlib.h>
+#include <wiiuse.h>
+#include <stdio.h>
+#include <windows.h>
+#include <time.h>
+#include <math.h>
 
 #define MEMORIA 60000
 #define PI 3.14158
@@ -72,7 +77,7 @@ void interpolazione(int puntoAx, int puntoAy, int puntoBx, int puntoBy,int width
 
 
 
-int paint_main() {
+int paint_main(struct wiimote_t** wiimotes) {
 	if (!glfwInit()) {
 		exit(EXIT_FAILURE);
 	}
@@ -82,13 +87,13 @@ int paint_main() {
 	int striscia[MEMORIA][2];	
 	
 
-	GLFWwindow* window = glfwCreateWindow(800, 800, "Finestra", NULL, NULL); //glfwGetPrimaryMonitor()
+	GLFWwindow* window = glfwCreateWindow(1280, 720, "Finestra", NULL, NULL); //glfwGetPrimaryMonitor()
 	if (!window) {
 		glfwTerminate();
 		exit(EXIT_FAILURE);
 	}
 	glfwMakeContextCurrent(window);
-	glfwSetWindowAspectRatio(window, 1, 1);
+	//glfwSetWindowAspectRatio(window, 1, 1);
 	glfwSwapInterval(1);
 
 	
@@ -116,9 +121,31 @@ int paint_main() {
 			//printf("%f %f\n", xpos, ypos);
 
 			
+			if (wiiuse_poll(wiimotes, 1)) {
 
+				wiiuse_set_ir(wiimotes[0], 1);
+				wiiuse_motion_sensing(wiimotes[0], 1); //Bisogna attivare anche l'accellerometro per avere un tracking più accurato
+				wiiuse_set_ir_sensitivity(wiimotes[0], 5); //Sensibilità, 5 è il massimo
+
+
+				if (wiimotes[0]->ir.dot[0].visible) {
+					premuto = 1;
+					striscia[tempo][0] = wiimotes[0]->ir.x; striscia[tempo][1] = wiimotes[0]->ir.y;
+
+				}
+				else if (!(wiimotes[0]->ir.dot[0].visible) && (premuto == 1)) {
+					striscia[tempo][0] = -1;
+					tempo++;
+					premuto = 0;
+					printf("rilasaciato");
+				}
+				else {
+
+					premuto = 0;
+				}
+			}
 			
-
+			/*
 			int state = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
 			if (state == GLFW_PRESS)
 			{
@@ -134,6 +161,7 @@ int paint_main() {
 			else {
 				premuto = 0;
 			}
+			*/
 
 			if (tempo > 0) {
 

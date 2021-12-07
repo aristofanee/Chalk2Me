@@ -263,12 +263,12 @@ int main()
 	int connected = wiiuse_connect(wiimotes, 1);
 
 
-	return paint_main();
+	//return paint_main();
 	
 
 	if (connected) { 
 		textcolor(10);
-		printf("La base di Chalk2Me è stata trovata\n"); 
+		printf("La base di Chalk2Me e' stata trovata\n"); 
 		textcolor(15);
 	} else {
 		textcolor(12);
@@ -290,12 +290,22 @@ int main()
 		printf("La base di Chalk2Me è stata trovata\n");
 		textcolor(15);
 	}
+
 	while (wiiuse_connect(wiimotes, 1)) {
+
+
+		//calibrazione
+
+		return paint_main(wiimotes);
+
+
 		if (wiiuse_poll(wiimotes, MAX_WIIMOTES)) {
 
 			wiiuse_set_ir(wiimotes[0], 1);
 			wiiuse_motion_sensing(wiimotes[0], 1); //Bisogna attivare anche l'accellerometro per avere un tracking più accurato
 			wiiuse_set_ir_sensitivity(wiimotes[0], 5); //Sensibilità, 5 è il massimo
+
+			
 
 
 			for (int i=0; i < 4; ++i) {

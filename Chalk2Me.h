@@ -1,1 +1,1 @@
-int paint_main();
+int paint_main(struct wiimote_t** wiimotes);
