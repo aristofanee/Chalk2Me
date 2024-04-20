@@ -31,8 +31,9 @@ And here is the 3D printed prototype:
 All the .stl files can be found in the "Mesh" folder of the repository.
 
 ## Promotion Video
-As part of the project we had also to produce a small video presentation, to do this we used Blender for the animations, Premiere for editing and After Effects for the motion graphics. The video can be seen [here](https://www.youtube.com/watch?v=DpLj6MsNOxI).
+As part of the project we had also to produce a small video presentation, to do this we used Blender for the animations, Premiere for editing and After Effects for the motion graphics. The video can be seen here:
+
+![Promotion video](Chalk2Me_Commercial.mp4) 
 
 ## Software
-In parallel with the design we also wanted to develop the software to complement our product. The software is written in C with the use of the Wiiuse, GLWF and OpenGL libraries. This was not the focus of the project. The codebase can be found in the "Software" folder of the repository.
-
+In parallel with the design we also wanted to develop the software to complement our product. The software is written in C with the use of the Wiiuse, GLWF and OpenGL libraries. Nonetheless, this was not the focus of the project and the software is still in the early stages of development.
