@@ -14,5 +14,8 @@ The main issue we encountered was the fact that the chalk itself gets consumed w
 
 ![Design of a lipstick](lipstick.png)
 
+A main challenge was to make sure that the internal wires could not get tangled in the motion of the chalk, the final design is the following:
 
+
+![Design of a lipstick](internal_mechanism.png) ![Design of a lipstick](totale sfatto.png)
 
