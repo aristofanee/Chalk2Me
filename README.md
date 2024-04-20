@@ -12,5 +12,5 @@ Here's a demo of the device in function:
 ## Design
 The main issue we encountered was the fact that the chalk itself gets consumed while writing and therefore we needed the height of the chalk to be adjustable to ensure the best writing experience. The final design was based on the typical lipstick casing:
 
-![Design of a lipstick](GIF_Chalk2Me.gif)
+![Design of a lipstick](lipstick.png)
 
