@@ -5,7 +5,7 @@ Being students during the pandemic made us see in first person the transition fr
 ## Our Solution
 Inspired by projects like [Wiimote Whiteboard](https://archive.org/details/wiimote-whiteboard), we designed a casing for the chalk that has a pressure sensor that detects when the professor writes on the board and an IR led that allows for the movement tracking. The tracking itself can be easily done with a Wiimote that acts as an IR camera. 
 Here's a demo of the device in function:
-![test](https://i.ibb.co/V9xD9dR/GIF-Chalk2-Me-ezgif-com-video-to-gif-converter.gif)
+![test](GIF_Chalk2Me.gif)
 
 
 
