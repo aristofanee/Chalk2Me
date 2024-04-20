@@ -18,15 +18,15 @@ The main issue we encountered was the fact that the chalk itself gets consumed w
 
 A main challenge was to make sure that the internal wires could not get tangled in the motion of the chalk, the final design is the following:
 
-![Design of a lipstick](internal_mechanism.png) 
+![Mechanisms](internal_mechanism.png) 
 
-Here is a better view with the components disassambled:
+A better view with the components disassambled:
 
-![Design of a lipstick](totale_sfatto.PNG)
+![Internals](totale_sfatto.PNG)
 
-And here is the 3D printed prototype:
+And this is the 3D printed prototype:
 
-![Design of a lipstick](photo.png)
+![Photo](photo.png)
 
 All the .stl files can be found in the "Mesh" folder of the repository.
 
